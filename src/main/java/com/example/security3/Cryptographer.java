@@ -1,30 +1,26 @@
-package main.java.com.example.security3;
+package com.example.security3;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cryptographer {
 
-    private int p;
-    private int q;
+    private final int p = 3;
+    private final int q = 7;
+    private List<List<Integer>> encryptedMessage;
 
-    public Cryptographer(int p, int q) {
-        this.p = p;
-        this.q = q;
+    public Cryptographer() {
     }
 
-    public List<List<Integer>> getEncryptedMessage(String message) {
+    public List<List<Integer>> getEncryptedMessage(String message,double e, double n) {
         char[] charsMessage = message.toCharArray();
-        int[] openedKeyArray = getOpenedKey();
-        int n = openedKeyArray[0];
-        int encryptedKey = openedKeyArray[1];
         List<List<Integer>> encryptedMessageList = new ArrayList<>();
         int encryptedInt;
 
         for (int asciiMessage : charsMessage) {
             List<Integer> encryptedSubArray = new ArrayList<>();
             for (int m : getIntArray(asciiMessage)) {
-                encryptedInt = (int) ((Math.pow(m, encryptedKey)) % n);
+                encryptedInt = (int) ((Math.pow(m, e)) % n);
                 encryptedSubArray.add(encryptedInt);
             }
 
@@ -37,8 +33,8 @@ public class Cryptographer {
     public String getDecryptedMessage(List<List<Integer>> inputMessage) {
 
         int[] openedKeyArray = getOpenedKey();
-        int n = openedKeyArray[0];
-        int encryptedKey = openedKeyArray[1];
+        int n = openedKeyArray[1];
+        int encryptedKey = openedKeyArray[0];
         int euler = Euler();
         int decryptedKey = getD(encryptedKey, euler);
 
@@ -72,18 +68,13 @@ public class Cryptographer {
         return integerList;
     }
 
-
-    private int[] getOpenedKey() {
+    public int[] getOpenedKey() {
 
         int n = p * q;
         int euler = Euler();
         int encryptedKey = getE(euler);
 
-        return new int[]{n, encryptedKey};
-    }
-
-    private int Euler() {
-        return (p - 1) * (q - 1);
+        return new int[]{encryptedKey, n};
     }
 
     private int getE(int euler) {
@@ -97,6 +88,20 @@ public class Cryptographer {
 
         return e;
     }
+
+    public int[] getClosedKey() {
+
+        int n = p * q;
+        int euler = Euler();
+        int decryptedKey = getD(getE(euler),euler);
+
+        return new int[]{decryptedKey, n};
+    }
+
+    private int Euler() {
+        return (p - 1) * (q - 1);
+    }
+
 
     private int gcd(int n1, int n2) {
         int gcd = 1;
@@ -121,19 +126,12 @@ public class Cryptographer {
     }
 
 
-    public int getP() {
-        return this.p;
+    public List<List<Integer>> getEncryptedMessage() {
+        return encryptedMessage;
     }
 
-    public void setP(int p) {
-        this.p = p;
+    public void setEncryptedMessage(List<List<Integer>> encryptedMessage) {
+        this.encryptedMessage = encryptedMessage;
     }
 
-    public int getQ() {
-        return this.q;
-    }
-
-    public void setQ(int q) {
-        this.q = q;
-    }
 }
