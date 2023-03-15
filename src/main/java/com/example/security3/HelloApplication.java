@@ -60,6 +60,16 @@ public class HelloApplication extends Application {
         HBox hboxRight = new HBox();
         hboxRight.setAlignment(Pos.TOP_CENTER);
 
+        Button generateKeys = new Button("Сгенерировать ключи");
+        generateKeys.setOnAction(event -> {
+            int[] openedKeyArray = cryptographer.getOpenedKey();
+            n.setText(String.valueOf(openedKeyArray[1]));
+            e.setText(String.valueOf(openedKeyArray[0]));
+            int[] closedKey = cryptographer.getClosedKey();
+            d.setText(String.valueOf(closedKey[0]));
+            nRight.setText(String.valueOf(closedKey[1]));
+        });
+
         Button generateOpenedKey = new Button("Сгенерировать открытый ключ");
         generateOpenedKey.setOnAction(event -> {
             int[] openedKeyArray = cryptographer.getOpenedKey();
@@ -90,15 +100,13 @@ public class HelloApplication extends Application {
             outputRightField.setText(decryptedMessage);
         });
 
-        hbox.getChildren().addAll(generateOpenedKey,encryptButton);
-        hboxRight.getChildren().addAll(generateClosedKey,decryptButton);
+        hbox.getChildren().addAll(encryptButton);
+        hboxRight.getChildren().addAll(decryptButton);
 
         encryptedBox.getChildren().addAll(inputField,e,n,hbox,outputField);
         decryptedBox.getChildren().addAll(inputRightField,d,nRight,hboxRight,outputRightField);
 
-        root.getChildren().addAll(encryptedBox,decryptedBox);
-
-
+        root.getChildren().addAll(encryptedBox,generateKeys,decryptedBox);
 
 
         Scene scene = new Scene(root,700, 800);
